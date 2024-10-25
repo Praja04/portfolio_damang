@@ -1,0 +1,197 @@
+view
+
+
+<?= $this->extend('template/layout'); ?>
+
+<?= $this->section('content'); ?>
+<!-- Content Wrapper. Contains page content -->
+<div class="content-wrapper">
+    <div class="container-full">
+        <!-- Main content -->
+        <section class="content">
+            <div class="row align-items-end">
+                <div class="col-xl-12 col-12">
+                    <div class="box bg-primary-light pull-up">
+                        <div class="box-body p-xl-0">
+                            <div class="row align-items-center">
+                                <div class="col-12 col-lg-3"><img src="<?= base_url('assets/template/images/svg-icon/color-svg/custom-14.svg') ?>" alt=""></div>
+                                <div class="col-12 col-lg-9">
+                                    <h2>Dashboard APB</h2>
+                                    <p class="text-dark mb-0 fs-16">
+                                        APB 2
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-xl-12 col-12">
+                    <div class="box">
+                        <div class="box-header with-border">
+                            <h4 class="box-title">Real Time Temperatur APB 2</h4>
+                        </div>
+                        <div class="box-body">
+                            <!-- <div id="interactive" style="height: 300px;"></div> -->
+                            <div id="container" style="height: 300px;"></div>
+                        </div>
+                        <!-- /.box-body-->
+                    </div>
+                </div>
+                <div class="col-xl-12 col-12">
+                    <div class="box">
+                        <div class="box-body">
+                            <!-- <div id="interactive" style="height: 300px;"></div> -->
+                            <div id="container2" style="height: 300px;"></div>
+                        </div>
+                        <!-- /.box-body-->
+                    </div>
+                </div>
+            </div>
+
+
+        </section>
+        <!-- /.content -->
+    </div>
+</div>
+
+
+<?= $this->endSection() ?>
+
+
+<?= $this->section('script'); ?>
+<script src="<?= base_url('assets/js/jquery.flot.js') ?>"></script>
+<!-- temp left -->
+<script>
+    let chart3;
+    const updateInterval3 = 500; // Interval dalam milidetik
+
+    const fetchDataCell3 = () => {
+        $.ajax({
+            url: '<?= base_url('apb/get/temp/left2') ?>',
+            method: 'GET',
+            dataType: 'json',
+            success: (data) => {
+                const labels = data.data.map(item => item.waktu); // Mengakses waktu
+                const valuesSet = data.data.map(item => parseFloat(item.L6_APB2_TEMP_LEFT_SETTING)); // Konversi ke angka
+                const valuesLeft = data.data.map(item => parseFloat(item.L6_APB2_TEMP_LEFT_ACTUAL)); // Konversi ke angka
+
+                if (chart3) {
+                    // Update chart jika sudah ada
+                    chart3.xAxis[0].setCategories(labels);
+                    chart3.series[0].setData(valuesLeft);
+                    chart3.series[1].setData(valuesSet);
+                } else {
+                    // Buat chart baru jika belum ada
+                    chart3 = Highcharts.chart('container', {
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: 'L6_APB2_TEMP_LEFT_SETTING dan L6_APB2_TEMP_LEFT_ACTUAL'
+                        },
+                        xAxis: {
+                            categories: labels,
+                            title: {
+                                text: 'Waktu'
+                            }
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Nilai'
+                            },
+                            min: 0
+                        },
+                        series: [{
+                            name: 'L6_APB2_TEMP_LEFT_SETTING',
+                            data: valuesSet
+                        }, {
+                            name: 'L6_APB2_TEMP_LEFT_ACTUAL',
+                            data: valuesLeft
+                        }]
+                    });
+                }
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error('Error fetching data:', textStatus, errorThrown);
+            }
+        });
+    };
+
+    const updateCell3 = () => {
+        fetchDataCell3();
+        setTimeout(updateCell3, updateInterval3);
+    };
+
+    // Ambil data pertama kali saat halaman dimuat dan mulai pembaruan otomatis
+    fetchDataCell3();
+    updateCell3();
+</script>
+<!-- temp right -->
+<script>
+    let chart4;
+    const updateInterval4 = 500; // Interval dalam milidetik
+
+    const fetchDataCell4 = () => {
+        $.ajax({
+            url: '<?= base_url('apb/get/temp/right2') ?>',
+            method: 'GET',
+            dataType: 'json',
+            success: (data) => {
+                const labels = data.data.map(item => item.waktu); // Mengakses waktu
+                const valuesRight = data.data.map(item => parseFloat(item.L6_APB2_TEMP_RIGHT_ACTUAL)); // Konversi ke angka
+                const valuesSet = data.data.map(item => parseFloat(item.L6_APB2_TEMP_RIGHT_SETTING)); // Konversi ke angka
+
+                if (chart4) {
+                    // Update chart jika sudah ada
+                    chart4.xAxis[0].setCategories(labels);
+                    chart4.series[0].setData(valuesLeft);
+                    chart4.series[1].setData(valuesSet);
+                } else {
+                    // Buat chart baru jika belum ada
+                    chart4 = Highcharts.chart('container2', {
+                        chart: {
+                            type: 'line'
+                        },
+                        title: {
+                            text: 'L6_APB2_TEMP_RIGHT_ACTUAL dan L6_APB2_TEMP_RIGHT_SETTING'
+                        },
+                        xAxis: {
+                            categories: labels,
+                            title: {
+                                text: 'Waktu'
+                            }
+                        },
+                        yAxis: {
+                            title: {
+                                text: 'Nilai'
+                            },
+                            min: 0
+                        },
+                        series: [{
+                            name: 'L6_APB2_TEMP_RIGHT_ACTUAL',
+                            data: valuesRight
+                        }, {
+                            name: 'L6_APB2_TEMP_RIGHT_SETTING',
+                            data: valuesSet
+                        }]
+                    });
+                }
+            },
+            error: (jqXHR, textStatus, errorThrown) => {
+                console.error('Error fetching data:', textStatus, errorThrown);
+            }
+        });
+    };
+
+    const updateCell4 = () => {
+        fetchDataCell4();
+        setTimeout(updateCell4, updateInterval4);
+    };
+
+    // Ambil data pertama kali saat halaman dimuat dan mulai pembaruan otomatis
+    fetchDataCell4();
+    updateCell4();
+</script>
+<?= $this->endSection() ?>
