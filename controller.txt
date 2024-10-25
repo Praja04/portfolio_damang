@@ -1,0 +1,58 @@
+controller
+
+<?php
+
+namespace App\Controllers;
+
+use App\Controllers\BaseController;
+use CodeIgniter\HTTP\ResponseInterface;
+use App\Models\ModelApb1;
+use App\Models\ModelApb2;
+
+class DashboardApb extends BaseController
+{
+    protected $apb1;
+    protected $apb2;
+    public function __construct()
+    {
+        $this->apb1 = new ModelApb1();
+        $this->apb2 = new ModelApb2();
+    }
+    public function dashboard_apb1()
+    {
+        //
+        return view('APB/dashboard_apb1');
+    }
+
+    public function dashboard_apb2()
+    {
+        //
+        return view('APB/dashboard_apb2');
+    }
+
+    //APB1
+    public function getData_APB1_tempLeftActual()
+    {
+        $data = $this->apb1->getDataTempLeftActual_APB1();
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    public function getData_APB1_tempRightActual()
+    {
+        $data = $this->apb1->getDataTempRightActual_APB1();
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    //APB2
+    public function getData_APB2_tempLeftActual()
+    {
+        $data = $this->apb2->getDataTempLeftActual_APB2();
+        return $this->response->setJSON(['data' => $data]);
+    }
+
+    public function getData_APB2_tempRightActual()
+    {
+        $data = $this->apb2->getDataTempRightActual_APB2();
+        return $this->response->setJSON(['data' => $data]);
+    }
+}
